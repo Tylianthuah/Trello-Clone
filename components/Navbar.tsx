@@ -5,12 +5,34 @@ import { ArrowRight, Trello } from "lucide-react";
 import { SignInButton, SignUp, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+
 const Navbar = () => {
   const { isSignedIn, user } = useUser();
-    console.log(user);
+  const pathName = usePathname();
+
+  const isDashboardPage = pathName === "/dashboard";
+
+  if(isDashboardPage){
+    return (
+    <div className="border-b bg-white/80 backdrop-blur-lg sticky top-0 z-50">
+      <div className="flex items-center justify-between container mx-auto py-4 sm:py-6 px-3">
+        <div className="flex items-center space-x-2">
+          <Trello className="text-blue-600 h-6 w-6 sm:h-8 sm:w-8" />
+          <span className="text-xl sm:text-2xl font-bold font-gray-900">
+            Trello
+          </span>
+        </div>
+        
+        <UserButton />
+      </div>
+    </div>
+  );
+  }
   return (
     <div className="border-b bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-      <div className="flex items-center justify-between container mx-auto py-3 sm:py-4 px-3">
+      <div className="flex items-center justify-between container mx-auto py-4 sm:py-6 px-3">
         <div className="flex items-center space-x-2">
           <Trello className="text-blue-600 h-6 w-6 sm:h-8 sm:w-8" />
           <span className="text-xl sm:text-2xl font-bold font-gray-900">
