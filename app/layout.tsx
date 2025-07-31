@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins} from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import SupabaseProvider from "@/lib/supabase/SupabaseProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function RootLayout({
         <body
           className={poppins.className} suppressHydrationWarning={true}
         >
+          <SupabaseProvider>
           {children}
+          </SupabaseProvider>
         </body>
       </html>
     </ClerkProvider>

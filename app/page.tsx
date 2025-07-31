@@ -2,6 +2,7 @@
 
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
+import { db } from '@/lib/db/db'
 import { SignUpButton, useUser } from '@clerk/nextjs'
 import { ArrowRight, CheckSquare, Shield, Users, WavesIcon, Zap } from 'lucide-react'
 import React from 'react'
