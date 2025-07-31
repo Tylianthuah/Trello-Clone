@@ -2,6 +2,16 @@ import { Board, Column } from "@/lib/supabase/models"
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const boardService = {
+
+    async getBoards(
+      supabase : SupabaseClient,
+      userId : string
+    ){
+      const {data, error} = await supabase.from("boards").select("*").eq("user_id", userId).order('created_at', {ascending : false})
+      if (error) throw error;
+      return data || [];
+    },
+
     async createBoard(
         supabase: SupabaseClient,
         board: Omit<Board, "id" | "created_at" | "updated_at">
