@@ -19,9 +19,7 @@ const Dashboard = () => {
   const handleCreateBoard = async () => {
     try {
       let board = await createBoard({title:'New Board'});
-      console.log(board)
     } catch (err) {
-      console.error(err);
       alert("Error creating board");
     }
   };
@@ -171,31 +169,33 @@ const Dashboard = () => {
               ) : viewMode === "grid" ? (
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6'>
                   {boards.map ( (board, key) => (
-                    <Link href={`/boards/${board.id}`} key={key}>
-                     <Card className='hover:shadow-lg transition-shadow cursor-pointer group'>
-                        <CardHeader>
-                          <div className='flex items-center justify-between'>
-                            <div className={`h-4 w-4 ${board.color} rounded`}></div>
-                            <Badge className='text-xs' variant="secondary">New</Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className='my-4'>
-                          <CardTitle className='text-lg sm:text-xl mb-4 group-hover:text-blue-500 transition-colors'>
-                            {board.title}
-                          </CardTitle>
-                          <CardDescription className='text-sm mb-7'>
-                            {board.description}
-                          </CardDescription>
-                          <div className='flex items-center justify-between'>
-                            <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Created : <span className='font-normal'>{new Date(board.created_at).toLocaleDateString()}</span></Badge>
-                            <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Updated : <span className='font-normal'>{new Date(board.updated_at).toLocaleDateString()}</span></Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
+                    <div key={key}>
+                      <Link href={`/boards/${board.id}`} >
+                       <Card className='hover:shadow-lg transition-shadow cursor-pointer group'>
+                          <CardHeader>
+                            <div className='flex items-center justify-between'>
+                              <div className={`h-4 w-4 ${board.color} rounded`}></div>
+                              <Badge className='text-xs' variant="secondary">New</Badge>
+                            </div>
+                          </CardHeader>
+                          <CardContent className='my-4'>
+                            <CardTitle className='text-lg sm:text-xl mb-4 group-hover:text-blue-500 transition-colors'>
+                              {board.title}
+                            </CardTitle>
+                            <CardDescription className='text-sm mb-7'>
+                              {board.description}
+                            </CardDescription>
+                            <div className='flex items-center justify-between'>
+                              <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Created : <span className='font-normal'>{new Date(board.created_at).toLocaleDateString()}</span></Badge>
+                              <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Updated : <span className='font-normal'>{new Date(board.updated_at).toLocaleDateString()}</span></Badge>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </div>
                   ))}
 
-                  <Card className="border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer group">
+                  <Card className="border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer group" onClick={handleCreateBoard}>
                     <CardContent className="p-4 sm:p-6 flex flex-col items-center justify-center h-full min-h-[200px]">
                       <Plus className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 group-hover:text-blue-600 mb-2" />
                       <p className="text-sm sm:text-base text-gray-600 group-hover:text-blue-600 font-medium">
@@ -207,31 +207,33 @@ const Dashboard = () => {
               ) : (
                 <div>
                   {boards.map ( (board, key) => (
-                    <Link href={`/boards/${board.id}`} key={key} className={key > 0 ? "mt-4" : ""}>
-                     <Card className='hover:shadow-lg transition-shadow cursor-pointer group'>
-                        <CardHeader>
-                          <div className='flex items-center justify-between'>
-                            <div className={`h-4 w-4 ${board.color} rounded`}></div>
-                            <Badge className='text-xs' variant="secondary">New</Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className='my-4'>
-                          <CardTitle className='text-lg sm:text-xl mb-4 group-hover:text-blue-500 transition-colors'>
-                            {board.title}
-                          </CardTitle>
-                          <CardDescription className='text-sm mb-7'>
-                            {board.description}
-                          </CardDescription>
-                          <div className='flex items-center justify-between'>
-                            <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Created : <span className='font-normal'>{new Date(board.created_at).toLocaleDateString()}</span></Badge>
-                            <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Updated : <span className='font-normal'>{new Date(board.updated_at).toLocaleDateString()}</span></Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
+                    <div key={key} className={key > 0 ? "mt-4" : ""}>
+                      <Link href={`/boards/${board.id}`} key={key} className={key > 0 ? "mt-4" : ""}>
+                       <Card className='hover:shadow-lg transition-shadow cursor-pointer group'>
+                          <CardHeader>
+                            <div className='flex items-center justify-between'>
+                              <div className={`h-4 w-4 ${board.color} rounded`}></div>
+                              <Badge className='text-xs' variant="secondary">New</Badge>
+                            </div>
+                          </CardHeader>
+                          <CardContent className='my-4'>
+                            <CardTitle className='text-lg sm:text-xl mb-4 group-hover:text-blue-500 transition-colors'>
+                              {board.title}
+                            </CardTitle>
+                            <CardDescription className='text-sm mb-7'>
+                              {board.description}
+                            </CardDescription>
+                            <div className='flex items-center justify-between'>
+                              <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Created : <span className='font-normal'>{new Date(board.created_at).toLocaleDateString()}</span></Badge>
+                              <Badge variant={'secondary'} className='text-gray-500 text-[9px]'>Updated : <span className='font-normal'>{new Date(board.updated_at).toLocaleDateString()}</span></Badge>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </div>
                   ))}
 
-                  <Card className="mt-4 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer group">
+                  <Card className="mt-4 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer group" onClick={handleCreateBoard}>
                     <CardContent className="p-4 sm:p-6 flex flex-col items-center justify-center h-full min-h-[200px]">
                       <Plus className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 group-hover:text-blue-600 mb-2" />
                       <p className="text-sm sm:text-base text-gray-600 group-hover:text-blue-600 font-medium">

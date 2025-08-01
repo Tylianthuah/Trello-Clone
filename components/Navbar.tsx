@@ -1,19 +1,23 @@
 'use client';
 
 import React from "react";
-import { ArrowLeft, ArrowRight, MoreHorizontal, Trello } from "lucide-react";
+import { ArrowLeft, ArrowRight, Filter, FilterIcon, MoreHorizontal, Trello } from "lucide-react";
 import { SignInButton, SignUp, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import path from "path";
+import { VscFilterFilled } from "react-icons/vsc";
+import { Badge } from "./ui/badge";
 
 interface  props {
   boardTitle?: string;
   onEditBoard?: () => void;
+  onFilterOpen? : () => void;
+  filterCount?: number
 }
 
-const Navbar = ({boardTitle, onEditBoard} : props) => {
+const Navbar = ({boardTitle, onEditBoard, onFilterOpen, filterCount = 0} : props) => {
   const { isSignedIn, user } = useUser();
   const pathName = usePathname();
 
@@ -51,7 +55,7 @@ const Navbar = ({boardTitle, onEditBoard} : props) => {
           <div className="flex items-center space-x-2 sm:space-x-2 min-w-0">
             <Trello className="text-blue-600" />
             <div className="items-center space-x-1 sm:space-x-2 min-w-0">
-              <span className="text-lg font-bold text-gray-900 truncate">
+              <span className={`text-lg font-bold text-gray-900 truncate`}>
                 {boardTitle}
               </span>
               {onEditBoard && (
@@ -68,8 +72,23 @@ const Navbar = ({boardTitle, onEditBoard} : props) => {
           </div>
         </div>
 
-        <div>
-
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+            {
+              onFilterOpen && 
+              <Button variant={"outline"} size="sm"
+                  className={`text-xs sm:text-sm ${
+                    filterCount > 0 ? "bg-blue-100 border-blue-200" : ""
+                  }`}
+                  onClick={onFilterOpen}
+              >
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2"  />
+                  <span className="hidden sm:inline">Filter</span>
+                  {
+                    filterCount > 0 &&
+                    <Badge variant={"secondary"} className="text-xs ml-1 sm:ml-2 bg-blue-100 border-blue-200">{filterCount}</Badge>
+                  }
+              </Button>
+            }
         </div>
       </div>
     </header>

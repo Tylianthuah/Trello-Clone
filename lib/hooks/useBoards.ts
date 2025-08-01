@@ -2,7 +2,7 @@
 import {  useUser } from "@clerk/nextjs";
 import { boardDataService, boardService } from "../services";
 import { useEffect, useState } from "react";
-import { Board } from "../supabase/models";
+import { Board, Column, ColumnWithTasks } from "../supabase/models";
 import { useSupabase } from "../supabase/SupabaseProvider";
 
 export function useBoards() {
@@ -53,4 +53,49 @@ export function useBoards() {
         }
     }
     return {loading, error, boards, createBoard}
+}
+
+export function useBoard(boardId: string) {
+    const { user } = useUser();
+    const { supabase } = useSupabase();
+    const [board, setBoard] = useState<Board | null>(null);
+    const [columns, setColumns] = useState<ColumnWithTasks[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+
+    useEffect(()=> {
+       if(user){
+        loadBoard();
+       }
+    }, [user, supabase])
+
+    async function loadBoard() {
+        if(!user) throw new Error("User not authenticated");
+
+        try {
+          setLoading(true)
+          const data = await boardDataService.getBoardwithColumns(supabase! , boardId)
+          setBoard(data.board);
+          setColumns(data.ColumnWithTasks);
+        } catch (error) {
+          setError( error instanceof Error ? error.message : `Failed to load board with id : ${boardId}`)
+        }
+        finally{
+          setLoading(false)
+        }
+    }
+
+    async function updateBoard(title : string, color: string){
+      if(!user) throw new Error("User not authenticated");
+      try {
+        setLoading(true);
+        const data = await boardService.updateBoard(supabase!,title, color, boardId);
+        setBoard(data);
+      }catch(error){
+        setError(error instanceof Error ? error.message : `Failed to update board with id: ${boardId}`)
+      }
+    }
+
+    return {loading, error, board, columns, updateBoard}
 }
