@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useBoard } from "@/lib/hooks/useBoards";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -26,8 +28,14 @@ const Board = () => {
   console.log(!isEditingTitle);
   const handleBoardUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateBoard(newTitle, newColor ?? board?.title);
-    setIsEditingTitle(false); // close modal or form
+	try {
+		if (!newTitle.trim() || !board) return;
+		 await updateBoard(board.id, {
+        	title: newTitle.trim(),
+        	color: newColor || board.color,
+      	});
+    	setIsEditingTitle(false); // close modal or form
+	} catch (error) {}
   };
 
   return (
@@ -134,10 +142,10 @@ const Board = () => {
               <Input type="date" className="w-auto" />
             </div>
             <div className="flex justify-between mt-10">
-              <Button type="button" variant={"outline"}>
+              <Button variant={"outline"}>
                 Clear Filters
               </Button>
-              <Button type="button" onClick={() => setIsFilterOpen(false)}>
+              <Button  onClick={() => setIsFilterOpen(false)}>
                 Apply Filters
               </Button>
             </div>
@@ -147,33 +155,78 @@ const Board = () => {
 
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 justify-between items-center mb-6 ">
-			<div className="flex items-center flex-wrap gap-4 sm:gap-6">
-				<div className="text-sm text-gray-600">
-					<span>Total Tasks: </span>
-					{columns.reduce((sum, col) => sum + col.tasks.length, 0)}
-				</div>
-			</div>		
-			<Dialog>
-				<DialogTrigger >
-					<Button
-						size="sm"
-					>
-						<Plus />
-						Add Task
-					</Button>
-				</DialogTrigger>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>
-							Add task to the board
-						</DialogTitle>
-					</DialogHeader>
-					<form>
-						
-					</form>
-				</DialogContent>
-			</Dialog>		
+			    <div className="flex items-center flex-wrap gap-4 sm:gap-6">
+			    	<div className="text-sm text-gray-600">
+			    		<span>Total Tasks: </span>
+			    		{columns.reduce((sum, col) => sum + col.tasks.length, 0)}
+			    	</div>
+			    </div>		
+			    <Dialog>
+			    	<DialogTrigger >
+			    		<Button
+			    			size="sm"
+			    		>
+			    			<Plus />
+			    			Add Task
+			    		</Button>
+			    	</DialogTrigger>
+			    	<DialogContent>
+			    		<DialogHeader>
+			    			<DialogTitle>
+			    				Add task to the board
+			    			</DialogTitle>
+			    		</DialogHeader>
+			    		<form>
+                  			<div className="space-y-4 sm:space-y-5">
+								<div className="space-y-2 sm:space-y-3">
+									<Label>Title*</Label>
+									<Input type="text" id="taskTitle" name="taskTitle" required placeholder="Enter the task title"  />
+								</div>
+
+								<div className="space-y-2 sm:space-y-3">
+									<Label>Description</Label>
+									<Textarea placeholder="Enter the description for the task" id="taskDescription" name="taskDescription" rows={3}></Textarea>
+								</div>
+
+								<div className="flex space-y-2 sm:space-y-3 gap-5 items-center">
+									<div className="space-y-2 sm:space-y-3">
+										<Label>Assignee</Label>
+										<Input id="assginee" name="assignee" placeholder="assignee"/>
+									</div>
+									<div className="space-y-2 sm:space-y-3">
+										<Label>Priority</Label>
+										<Select>
+											<SelectTrigger className="w-[180px]" name="priority" defaultValue={"medium"}>
+    											<SelectValue/>
+  											</SelectTrigger>
+											<SelectContent>
+												{["low","medium","high"].map((priority, key) => (
+													<SelectItem key={key} value={priority}>{priority}</SelectItem>
+												))
+												}
+											</SelectContent>
+										</Select>
+									</div>
+								</div>
+
+								<div className="space-y-2 sm:space-y-3">
+									<Label>Due date</Label>
+									<Input type="date" id="dueDate" name="dueDate" className="w-auto" />
+								</div>
+								
+								<div className="flex justify-end space-x-2 pt-4">
+                    				<Button type="submit">Create Task</Button>
+                  				</div>
+                  			</div>
+			    		</form>
+			    	</DialogContent>
+			    </Dialog>		
         </div>
+		
+		{/* Board Section */}
+		<div>
+			
+		</div>
       </main>
     </div>
   );

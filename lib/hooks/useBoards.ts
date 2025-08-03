@@ -86,11 +86,11 @@ export function useBoard(boardId: string) {
         }
     }
 
-    async function updateBoard(title : string, color: string){
+    async function updateBoard(boardId : string,update : Partial<Board>){
       if(!user) throw new Error("User not authenticated");
       try {
         setLoading(true);
-        const data = await boardService.updateBoard(supabase!,title, color, boardId);
+        const data = await boardService.updateBoard(supabase!,boardId, update);
         setBoard(data);
       }catch(error){
         setError(error instanceof Error ? error.message : `Failed to update board with id: ${boardId}`)

@@ -38,13 +38,12 @@ export const boardService = {
 
   async updateBoard(
     supabase: SupabaseClient,
-    title: string,
-    color: string,
-    boardId: string
+    boardId: string,
+    update : Partial<Board>
   ): Promise<Board> {
     const { data, error } = await supabase
       .from("boards")
-      .update({ title, color })
+      .update({ ...update, updated_at : new Date().toISOString() })
       .eq("id", boardId)
       .select()
       .single();
