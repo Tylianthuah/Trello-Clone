@@ -39,11 +39,11 @@ export const boardService = {
   async updateBoard(
     supabase: SupabaseClient,
     boardId: string,
-    update : Partial<Board>
+    update: Partial<Board>
   ): Promise<Board> {
     const { data, error } = await supabase
       .from("boards")
-      .update({ ...update, updated_at : new Date().toISOString() })
+      .update({ ...update, updated_at: new Date().toISOString() })
       .eq("id", boardId)
       .select()
       .single();
@@ -98,6 +98,20 @@ export const taskService = {
 
     return data || [];
   },
+
+  async createTask(
+    supabase: SupabaseClient,
+    task: Omit<Task, "id" | "created_at" | "updated_at">
+  ): Promise<Task> {
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert(task)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
 };
 
 export const boardDataService = {
@@ -139,19 +153,17 @@ export const boardDataService = {
 
   async getBoardwithColumns(supabase: SupabaseClient, boardId: string) {
     const [board, columns, tasks] = await Promise.all([
-      	boardService.getBoard(supabase, boardId),
-      	columnService.getColumns(supabase, boardId),
-		taskService.getTaskByBoard(supabase, boardId)
+      boardService.getBoard(supabase, boardId),
+      columnService.getColumns(supabase, boardId),
+      taskService.getTaskByBoard(supabase, boardId),
     ]);
 
     if (!board) throw new Error("Board not found.");
 
-	const ColumnWithTasks = columns.map((column) => (
-		{
-			...column,
-			tasks: tasks.filter( task => task.column_id === column.id)
-		}
-	))
+    const ColumnWithTasks = columns.map((column) => ({
+      ...column,
+      tasks: tasks.filter((task) => task.column_id === column.id),
+    }));
     return { board, ColumnWithTasks };
   },
 };
