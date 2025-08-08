@@ -1,11 +1,10 @@
-import { Task } from "@/lib/supabase/models";
-import React from "react";
+import { Calendar, User } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
-import { Calendar, User, X } from "lucide-react";
+import { Task } from "@/lib/supabase/models";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const SortableTask = ({ task }: { task: Task }) => {
+function SortableTask({ task }: { task: Task }) {
   const {
     attributes,
     listeners,
@@ -15,7 +14,13 @@ const SortableTask = ({ task }: { task: Task }) => {
     isDragging,
   } = useSortable({ id: task.id });
 
-  const getPriorityColor = (priority: string) => {
+  const styles = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  function getPriorityColor(priority: "low" | "medium" | "high"): string {
     switch (priority) {
       case "high":
         return "bg-red-500";
@@ -26,19 +31,9 @@ const SortableTask = ({ task }: { task: Task }) => {
       default:
         return "bg-yellow-500";
     }
-  };
-
+  }
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1,
-      }}
-    >
+    <div ref={setNodeRef} style={styles} {...listeners} {...attributes}>
       <Card className="cursor-pointer hover:shadow-md transition-shadow">
         <CardContent className="p-3 sm:p-4">
           <div className="space-y-2 sm:space-y-3">
@@ -81,6 +76,5 @@ const SortableTask = ({ task }: { task: Task }) => {
       </Card>
     </div>
   );
-};
-
-export default SortableTask;
+}
+export default SortableTask;  

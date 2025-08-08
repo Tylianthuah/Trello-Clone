@@ -1,6 +1,11 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { boardDataService, boardService, taskService } from "../services";
+import {
+  boardDataService,
+  boardService,
+  columnService,
+  taskService,
+} from "../services";
 import { useEffect, useState } from "react";
 import { Board, Column, ColumnWithTasks, Task } from "../supabase/models";
 import { useSupabase } from "../supabase/SupabaseProvider";
@@ -129,7 +134,7 @@ export function useBoard(boardId: string) {
           columns.find((col) => col.id === columnId)?.tasks.length || 0,
         priority: taskData.priority || "medium",
       });
-      
+
       setColumns((prev) =>
         prev.map((col) =>
           col.id === columnId ? { ...col, tasks: [...col.tasks, newTask] } : col
@@ -145,7 +150,6 @@ export function useBoard(boardId: string) {
       );
     }
   }
-
 
   async function moveTask(
     taskId: string,
@@ -184,5 +188,55 @@ export function useBoard(boardId: string) {
     }
   }
 
-  return { loading, error, board, columns, setColumns , moveTask , updateBoard ,createRealTask };
+  async function createColumn(title: string) {
+    if (!board || !user) throw new Error("Board not loaded");
+
+    try {
+      const newColumn = await columnService.createColumn(supabase!, {
+        title,
+        board_id: board.id,
+        sort_order: columns.length,
+        user_id: user.id,
+      });
+
+      setColumns((prev) => [...prev, { ...newColumn, tasks: [] }]);
+      return newColumn;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create column.");
+    }
+  }
+
+
+   async function updateColumn(columnId: string, title: string) {
+    try {
+      const updatedColumn = await columnService.updateColumnTitle(
+        supabase!,
+        columnId,
+        title
+      );
+
+      setColumns((prev) =>
+        prev.map((col) =>
+          col.id === columnId ? { ...col, ...updatedColumn } : col
+        )
+      );
+
+      return updatedColumn;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create column.");
+    }
+  }
+
+  return {
+    loading,
+    error,
+    board,
+    columns,
+    setColumns,
+    moveTask,
+    updateBoard,
+    createRealTask,
+    updateColumn,
+    createColumn,
+  };
 }

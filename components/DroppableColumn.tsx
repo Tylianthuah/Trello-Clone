@@ -1,54 +1,40 @@
 import { ColumnWithTasks } from "@/lib/supabase/models";
-import React, { ReactNode } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { useDroppable } from "@dnd-kit/core";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
-interface Column {
-  column: ColumnWithTasks;
-  children: ReactNode;
-  onCreateTask: (taskData: any) => Promise<void>;
-  onEditColumn: (column: ColumnWithTasks) => void;
-}
-
-const DroppableColumn = ({
+function DroppableColumn({
   column,
   children,
   onCreateTask,
   onEditColumn,
-}: Column) => {
+}: {
+  column: ColumnWithTasks;
+  children: React.ReactNode;
+  onCreateTask: (taskData: any) => Promise<void>;
+  onEditColumn: (column: ColumnWithTasks) => void;
+}) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
   return (
     <div
+      ref={setNodeRef}
       className={`w-full lg:flex-shrink-0 lg:w-80 ${
         isOver ? "bg-blue-50 rounded-lg" : ""
       }`}
-      ref={setNodeRef}
     >
       <div
         className={`bg-white rounded-lg shadow-sm border ${
           isOver ? "ring-2 ring-blue-300" : ""
         }`}
       >
-        {/* column header */}
+        {/* Column Header */}
         <div className="p-3 sm:p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 min-w-0">
@@ -59,13 +45,18 @@ const DroppableColumn = ({
                 {column.tasks.length}
               </Badge>
             </div>
-            <Button variant="ghost" size="sm" className="flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => onEditColumn(column)}
+            >
               <MoreHorizontal />
             </Button>
           </div>
         </div>
 
-        {/* {column content} */}
+        {/* column content */}
         <div className="p-2">
           {children}
           <Dialog>
@@ -142,6 +133,5 @@ const DroppableColumn = ({
       </div>
     </div>
   );
-};
-
+}
 export default DroppableColumn;
